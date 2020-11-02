@@ -1,19 +1,17 @@
 #include "Platform.h"
 
-Platform::Platform(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos)
+Platform::Platform(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos, float xScale, float yScale, float zScale)
 {
 	mPosition = _pos;
 	pPlatform = scnMan->createEntity(Ogre::SceneManager::PrefabType::PT_PLANE);
 	pPlatformNode = scnMan->getRootSceneNode()->createChildSceneNode();
 	pPlatformNode->setPosition(mPosition);
-	pPlatformNode->setScale(0.02, 0.001f, 0.0f);
+	pPlatformNode->setScale(xScale, yScale, zScale);
 	pPlatformNode->attachObject(pPlatform);
-	mPlatformBoundingBox = pPlatform->getWorldBoundingBox(true);
+	//mPlatformBoundingBox = pPlatform->getWorldBoundingBox(true);
 }
 
-Platform::Platform()
-{
-}
+
 
 
 

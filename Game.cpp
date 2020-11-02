@@ -29,6 +29,38 @@ Game::Game() : OgreBites::ApplicationContext("Simple Platform Game"){
 
 }
 
+Game::~Game()
+{
+	if (root)
+	{
+		delete[] root;
+		root = 0;
+	}
+	if (rect)
+	{
+		delete[] rect;
+		rect = 0;
+	}
+	if (platformA && platformB)
+	{
+		delete[] platformA;
+		delete[] platformB;
+		platformA = 0;
+		platformB = 0;
+	}
+	if (playerCharacter)
+	{
+		delete[] playerCharacter;
+		playerCharacter = 0;
+	}
+	if (mTrayMgr)
+	{
+		delete[] mTrayMgr;
+		mTrayMgr = 0;
+	}
+	
+}
+
 
 void Game::setup(){
 	// call the base first.
@@ -38,14 +70,14 @@ void Game::setup(){
 	addInputListener(this);
 
 	//get a pointer to the already created root.
-	Ogre::Root* root = getRoot();
+	root = getRoot();
 	Ogre::SceneManager* scnMgr = root->createSceneManager();
 
 	// Register our scxene with RTSS
 	Ogre::RTShader::ShaderGenerator* shaderGen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 	shaderGen->addSceneManager(scnMgr);
 
-	scnMgr->setAmbientLight(Ogre::ColourValue(0.1, 0.7, 0.5));
+	scnMgr->setAmbientLight(Ogre::ColourValue(1, 1, 1));
 
 	//without light we would just get a black screen.
 	Ogre::Light* light = scnMgr->createLight("Mainlight");
@@ -55,8 +87,9 @@ void Game::setup(){
 
 	//need to tell where we are.
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	camNode->setPosition(0, 0, 15);
-	camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_PARENT);
+	camNode->setPosition(0, 0, 20);
+	camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_WORLD);
+	
 	
 	// create the camera
 	Ogre::Camera* cam = scnMgr->createCamera("myCam");
@@ -104,14 +137,24 @@ void Game::setup(){
 	mThrottleFPSChange = 0;
 	mThrottleTPUChange = 0;
 
-	// Instantiate Platforms.
+	//Instantiate Floor
 
 	
+
+	// Instantiate Platforms.
+	Ogre::Vector3 floorPos = Ogre::Vector3(0, -5, 0);
+	floor = new Platform(scnMgr, floorPos, 0.2, 0.001, 0);
+	
 	Ogre::Vector3 paddlePos = Ogre::Vector3(0, -2, 0);
-	platformA = new Platform(scnMgr, paddlePos);
+	platformA = new Platform(scnMgr, paddlePos, 0.02, 0.001, 0);
 	
 	Ogre::Vector3 paddlePos1 = Ogre::Vector3(2, 2, 0);
-	platformB = new Platform(scnMgr, paddlePos1);
+	platformB = new Platform(scnMgr, paddlePos1, 0.02, 0.001, 0);
+
+	//Instantiate Player Character.
+
+	Ogre::Vector3 playerPos = Ogre::Vector3(0, 0, 0);
+	playerCharacter = new Player(scnMgr, playerPos);
 
 	// Instantiate game stats.
 
@@ -123,6 +166,9 @@ void Game::setup(){
 	pTpuLabel = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPLEFT, "Time/Update", "Time/Update:", 100);
 	pTpu = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPLEFT, "tpu", "0", 50);
 
+		playerLb = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPRIGHT, "score", "Score: ", 100);
+	playerSc = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPRIGHT, "Score","Score: ", 100);
+
 }
 
 bool Game::keyPressed(const OgreBites::KeyboardEvent &evt)
@@ -130,7 +176,21 @@ bool Game::keyPressed(const OgreBites::KeyboardEvent &evt)
 	if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
 	{
 		getRoot()->queueEndRendering();
-		Exit();
+	}
+
+	if (evt.keysym.sym == OgreBites::SDLK_LEFT)
+	{
+		playerCharacter->MoveLeft();
+	}
+
+	if (evt.keysym.sym == OgreBites::SDLK_RIGHT)
+	{
+		playerCharacter->MoveRight();
+	}
+
+	if (evt.keysym.sym == OgreBites::SDLK_SPACE)
+	{
+		playerCharacter->Jump();
 	}
 	return true;
 }
@@ -165,6 +225,10 @@ void Game::update(){
 	auto start = high_resolution_clock::now();
 
 	// update stuff
+	
+	playerSc->setCaption(Ogre::StringConverter::toString(mPlayerScore));
+
+	playerCharacter->Update();
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
@@ -178,11 +242,6 @@ void Game::update(){
 	}
 }
 
-void Game::Exit()
-{
-	delete[] rect;
-	delete[] mTrayMgr;
-}
 
 int main(int argc, char *argv[])
 {

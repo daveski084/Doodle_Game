@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include "Platform.h"
+#include "Player.h"
 
 
 
@@ -39,6 +40,9 @@ private:
     int mThrottleFPSChange;
     int mThrottleTPUChange;
     int mTpuNum;
+    int mPlayerScore = 0;
+
+    Ogre::Root* root;
    
     OgreBites::TrayManager* mTrayMgr;
     OgreBites::TrayListener myTrayListener;
@@ -46,18 +50,23 @@ private:
     OgreBites::Label* pTpu;
     OgreBites::Label* pFpsLabel;
     OgreBites::Label* pFps; 
+    OgreBites::Label* playerLb;
+    OgreBites::Label* playerSc;
 
     Ogre::MaterialPtr backGroundImage;
     Ogre::Rectangle2D* rect;
     Ogre::SceneNode* rectNode;
     Ogre::AxisAlignedBox aabInf;
-    
+
+    Player* playerCharacter;
+    Platform* floor;
     Platform* platformA;
     Platform* platformB;
 
 public:
     Game();
-    virtual ~Game() {}
+    ~Game();
+   // virtual ~Game() {}
 
     void setup();
     bool keyPressed(const OgreBites::KeyboardEvent& evt);
@@ -65,5 +74,4 @@ public:
     void processEvents();
     void run();
     void update();
-    void Exit();
 };

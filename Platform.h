@@ -34,13 +34,11 @@ private:
 public:
 
 	Platform();
-	Platform(Ogre::SceneManager* scnMan, Ogre::Vector3 pos);
+	Platform(Ogre::SceneManager* scnMan, Ogre::Vector3 pos, float xScale, float yScale, float zScale);
 	~Platform(){}
 
 	Ogre::Vector3 getPosition();
 
-	void setPosition(Ogre::Vector3 _pos);
-	void addToScene(Ogre::SceneManager* scnMan, Ogre::Vector3 pos);
 
 };
 
