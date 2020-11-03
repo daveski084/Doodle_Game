@@ -54,6 +54,7 @@ private:
     OgreBites::Label* playerSc;
 
     Ogre::MaterialPtr backGroundImage;
+    Ogre::MaterialPtr playerMat;
     Ogre::Rectangle2D* rect;
     Ogre::SceneNode* rectNode;
     Ogre::AxisAlignedBox aabInf;

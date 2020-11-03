@@ -27,13 +27,15 @@ private:
 public:
 
 	Player() {};
-	Player(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos);
+	Player(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos, Ogre::MaterialPtr mat);
 	~Player() {};
 
 	void MoveLeft();
 	void MoveRight();
 	void Jump();
 	void Update();
+
+
 
 	bool getIsFalling();
 	bool getIsAllowedToJump();

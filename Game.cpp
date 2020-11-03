@@ -19,8 +19,11 @@
 * 20/10/10    David Gasinec        Created Script.
 *
 |**********************************************************************/
+
+
 #include "Game.h"
 #include "OgreRectangle2D.h"
+#include "irrKlang.h"
 
 
 using namespace std::chrono;
@@ -97,8 +100,12 @@ void Game::setup(){
 	cam->setAutoAspectRatio(true);
 	camNode->attachObject(cam);
 	
+	
 	// and tell it to render into the main window
 	Ogre::Viewport* vp = getRenderWindow()->addViewport(cam);
+
+
+	scnMgr->setShadowTechnique(Ogre::ShadowTechnique::SHADOWTYPE_STENCIL_ADDITIVE);
 
 
 
@@ -131,6 +138,14 @@ void Game::setup(){
 	// Attach background to the scene
 	rectNode = scnMgr->getRootSceneNode()->createChildSceneNode("Background");
 	rectNode->attachObject(rect);
+	
+	//Add the player mat.
+	playerMat = Ogre::MaterialManager::getSingleton().create("doodle", "General");
+	playerMat->getTechnique(0)->getPass(0)->createTextureUnitState("doodle.png");
+	playerMat->getTechnique(0)->getPass(0)->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 128, true);
+	playerMat->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
+	playerMat->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+	playerMat->getTechnique(0)->getPass(0)->setLightingEnabled(true);
 
 	// Intialize game stats.
 	
@@ -154,7 +169,7 @@ void Game::setup(){
 	//Instantiate Player Character.
 
 	Ogre::Vector3 playerPos = Ogre::Vector3(0, 0, 0);
-	playerCharacter = new Player(scnMgr, playerPos);
+	playerCharacter = new Player(scnMgr, playerPos, playerMat);
 
 	// Instantiate game stats.
 
@@ -166,7 +181,7 @@ void Game::setup(){
 	pTpuLabel = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPLEFT, "Time/Update", "Time/Update:", 100);
 	pTpu = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPLEFT, "tpu", "0", 50);
 
-		playerLb = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPRIGHT, "score", "Score: ", 100);
+	playerLb = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPRIGHT, "score", "Score: ", 100);
 	playerSc = mTrayMgr->createLabel(OgreBites::TrayLocation::TL_TOPRIGHT, "Score","Score: ", 100);
 
 }

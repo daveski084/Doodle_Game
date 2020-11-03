@@ -1,15 +1,16 @@
 #include "Player.h"
 #include "Platform.h"
 
-Player::Player(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos)
+Player::Player(Ogre::SceneManager* scnMan, Ogre::Vector3 _pos, Ogre::MaterialPtr mat)
 {
 	mPlayerSpeed = 1.5f;
 	mPosition = _pos;
-	pPlayer = scnMan->createEntity("penguin.mesh");
+	pPlayer = scnMan->createEntity(Ogre::SceneManager::PrefabType::PT_PLANE);
 	pPlayerNode = scnMan->getRootSceneNode()->createChildSceneNode();
 	pPlayerNode->setPosition(mPosition);
-	pPlayerNode->setScale(0.03, 0.03, 0.0f);
+	pPlayerNode->setScale(0.01, 0.01, 0.0f);
 	pPlayerNode->attachObject(pPlayer);
+	pPlayer->setMaterial(mat);
 	//mPlayerBoundingBox = pPlayer->getWorldBoundingBox(true);
 }
 
@@ -115,3 +116,4 @@ void Player::Update()
 		pPlayerNode->setPosition(pPlayerNode->getPosition().x, 4.99, pPlayerNode->getPosition().z);
 	}
 }
+
